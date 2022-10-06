@@ -12,8 +12,8 @@
                 </el-icon>
             </el-radio-button>
         </el-radio-group>
-        <el-menu :default-active="route.name" class="el-menu-vertical-demo overflow-auto" :collapse="isCollapse" @open="handleOpen"
-            @close="handleClose" >
+        <el-menu :default-active="route.name" class="el-menu-vertical-demo overflow-auto" :collapse="isCollapse"
+            @open="handleOpen" @close="handleClose">
             <el-menu-item index="1" @click="toCharts">
                 <el-icon>
                     <icon-menu />
@@ -28,11 +28,11 @@
                     <span>用户
                     </span>
                 </template>
-                <el-menu-item index="UserList" class=""  @click="toUserManagement">用户管理</el-menu-item>
-               
+                <el-menu-item index="UserList" class="" @click="toUserManagement">用户管理</el-menu-item>
+
 
             </el-sub-menu>
-            <el-sub-menu index="3" >
+            <el-sub-menu index="3">
 
                 <template #title>
                     <el-icon>
@@ -46,7 +46,7 @@
 
 
             </el-sub-menu>
-            <el-sub-menu index="4" >
+            <el-sub-menu index="4">
                 <template #title>
                     <el-icon>
                         <School />
@@ -66,8 +66,8 @@
                     </el-icon><span>资讯</span>
                 </template>
 
-                <el-menu-item index="NewsList" class="">资讯管理</el-menu-item>
-                <el-menu-item index="AddNews" class="">添加资讯</el-menu-item>
+                <el-menu-item index="NewsList" class="" @click="toNewsManagement">资讯管理</el-menu-item>
+                <el-menu-item index="AddNews" class="" @click="toAddNews">添加资讯</el-menu-item>
 
             </el-sub-menu>
             <el-menu-item index="OrderList" @click="toOrderManagement">
@@ -92,7 +92,7 @@ import {
     ArrowLeft,
     ArrowRight
 } from '@element-plus/icons-vue'
-import { useRouter,useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const route = useRoute()
 
@@ -133,16 +133,29 @@ const toCharts = () => {
         name: 'Charts'
     })
 }
-const toAddMovie = ()=>{
-     router.push({
+const toAddMovie = () => {
+    router.push({
         name: 'AddMovie'
     })
 }
-const toAddCinema = ()=>{
-     router.push({
+const toAddCinema = () => {
+    router.push({
         name: 'AddCinema'
     })
 }
+
+const toNewsManagement = () => {
+    router.push({
+        name: 'NewsManagement'
+    })
+}
+
+const toAddNews = () => {
+    router.push({
+        name: 'AddNews'
+    })
+}
+
 
 </script>
 

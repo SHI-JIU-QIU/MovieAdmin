@@ -7,6 +7,7 @@ const useOrderStore = defineStore('OrderStore', {
     state: () => {
         return {
            //请求后存的数据
+           newsList:[]
         }
     },
     getters: {

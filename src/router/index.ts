@@ -78,6 +78,24 @@ const routes: Array<RouteRecordRaw> = [
                         name: 'AddCinema',
                         component: () => import('@/views/Home/CinemaManagement/AddCinema/index.vue'),
                     }]
+                },{
+                    path: '/home/newsManagement',
+                    name: 'NewsManagement',
+                    redirect: '/home/newsManagement/newsList',
+                    component: () => import('@/views/Home/NewsManagement/index.vue'),
+                    children: [{
+                        path: '/home/newsManagement/newsList',
+                        name: 'NewsList',
+                        component: () => import('@/views/Home/NewsManagement/NewsList/index.vue'),
+                    }, {
+                        path: '/home/newsManagement/newsDetail',
+                        name: 'NewsDetail',
+                        component: () => import('@/views/Home/NewsManagement/NewsDetail/index.vue'),
+                    },{
+                        path: '/home/newsManagement/addNews',
+                        name: 'AddNews',
+                        component: () => import('@/views/Home/NewsManagement/AddNews/index.vue'),
+                    }]
                 }]
             },
         ]

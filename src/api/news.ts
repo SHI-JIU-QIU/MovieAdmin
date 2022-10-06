@@ -1,10 +1,12 @@
 import serve from './index'
 
 //查找所有资讯
-
-
-
-
+export const apiGetAllNews = () => {
+    return serve({
+        url: '/selectAllConsult',
+        method: 'GET',
+    })
+}
 
 
 
