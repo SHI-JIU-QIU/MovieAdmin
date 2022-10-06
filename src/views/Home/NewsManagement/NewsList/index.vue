@@ -16,6 +16,9 @@ newsStore.reqGetAllNews().then(() => {
     newsList.value = newsStore.newsList
 })
 
+newsStore.$subscribe(()=>{
+     newsList.value = newsStore.newsList
+})
 
 
 </script>

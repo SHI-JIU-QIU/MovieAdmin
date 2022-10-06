@@ -19,7 +19,7 @@
                         
                             <el-input class="" :placeholder="item.placeholder" :modelValue="modelValue[`${item.field}`]"
                                 @update:modelValue="valueChange($event, item.field)" type="textarea"
-                                :autosize="{ minRows: 4, maxRows: 4 }" />
+                                :autosize="{ minRows: 5 ,maxRows:10}" />
                     
                     </template>
 

@@ -50,3 +50,13 @@ export const apiAddNews = (formData: FormData) => {
 
 
 //根据关键词查找资讯
+
+export const apiGetNewsByTitle = (data: any) => {
+    return serve({
+        url: '/selectConsultLikeName',
+        method: 'GET',
+        params: {
+            name: data.name
+        }
+    })
+}

@@ -26,6 +26,9 @@ const activeNames = ref(['1'])
 const handleChange = (val: string[]) => {
     console.log(val)
 }
+
+
+
 </script>
 
 <style scoped>

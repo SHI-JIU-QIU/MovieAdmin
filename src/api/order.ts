@@ -2,13 +2,10 @@ import serve from './index'
 
 //查找所有订单
 
-export const apiGetAllOrder = (data: any) => {
+export const apiGetAllOrder = () => {
     return serve({
-        url: '/',
-        method: '',
-        params: {
-
-        }
+        url: '/selectAllOrders',
+        method: 'GET',
     })
 }
 
