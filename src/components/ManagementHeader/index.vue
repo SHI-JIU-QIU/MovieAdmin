@@ -3,7 +3,7 @@
     <el-button type="default" :icon="ArrowLeft" class="col-span-1 w-fit" @click="back"
       v-if="route.path.includes('Detail')">返回</el-button>
     <el-input :modelValue="keyword" @update:modelValue="search($event)" class="col-start-2 col-end-4" size="large"
-      placeholder="Please Input" v-if="!route.path.includes('Detail')">
+      placeholder="Please Input" v-if="!(route.path.includes('Detail')||(route.path.includes('add')))">
       <template #append>
         <el-button :icon="Search" />
       </template>

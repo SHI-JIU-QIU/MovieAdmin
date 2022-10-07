@@ -1,18 +1,20 @@
 <template>
     <el-card shadow="hover" class="mb-8">
         <el-collapse v-model="activeNames" @change="handleChange">
-            <el-collapse-item >
+            <el-collapse-item>
                 <template #title class="">
-                    订单编号：
+                    订单编号：{{order.id}}
                     <el-button type="danger" size="small" class="ml-auto"> 退票</el-button>
                 </template>
-                <span class="mr-4">用户：xxxxxxxxxxx</span>
-                <span class="mr-4">电影：xxxxxxxxxxxx</span>
-                <span class="mr-4">电影院：xxxxxxxxxxxxxxxxxxxxxx</span>
-                <span class="mr-4">影厅：xxxxxxxxxxx</span>
-                <span class="mr-4">场次：xxxxxxxxxxxxx</span>
-                <span class="mr-4">取件码：xxxxxxxxxxx</span>
-                <span class="mr-4">订单时间：xxxxxxxxxxxxxxxxxxxxxx</span>
+                <span class="mr-10">用户：{{order.orderUser.username}}</span>
+                <span class="mr-10">电影：{{order.orderSchedule.scheduleMovie.movieCName}}</span>
+                <span class="mr-10">电影院：{{order.orderSchedule.scheduleHall.hallCinema.cinemaName}}</span>
+                <span class="mr-10">影厅：{{order.orderSchedule.scheduleHall.hallName}}</span>
+                <span class="mr-10">场次：{{order.orderSchedule.scheduleStartTime}}</span>
+                <span class="mr-10">座位：{{order.orderPosition}}</span>
+                <span class="mr-10">取件码：xxxxxxxxxxx</span>
+                <span class="mr-10">价格：{{order.orderPrice}}</span>
+                <span class="mr-10">订单时间：{{order.orderTime.replace('T',' ').slice(0,19)}}</span>
             </el-collapse-item>
 
         </el-collapse>
@@ -27,6 +29,23 @@ const handleChange = (val: string[]) => {
     console.log(val)
 }
 
+interface Order {
+    id: string
+    userId: number
+    scheduleId: number
+    orderPosition: string
+    orderState: number
+    orderPrice: number
+    orderTime: string
+    orderUser: any
+    orderSchedule: any
+}
+type Props = {
+    order: Order
+}
+const { order } = defineProps<Props>()
+console.log(order);
+
 
 
 </script>
@@ -35,7 +54,8 @@ const handleChange = (val: string[]) => {
 :deep() .el-collapse-item__content {
     @apply flex flex-wrap
 }
-:deep() .el-collapse-item__header .el-collapse-item__arrow{
+
+:deep() .el-collapse-item__header .el-collapse-item__arrow {
     @apply m-0 ml-8
 }
 </style>

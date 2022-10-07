@@ -39,7 +39,7 @@ export const apiDeleteNews = (data: any) => {
 
 export const apiAddNews = (formData: FormData) => {
     return serve({
-        url: '/deleteConsult',
+        url: '/insertConsult',
         method: 'POST',
         headers: {
             'Content-Type': 'multipart/form-data'

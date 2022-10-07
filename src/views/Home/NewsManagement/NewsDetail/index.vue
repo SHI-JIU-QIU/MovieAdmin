@@ -22,7 +22,7 @@
                     formStyle="grid grid-cols-2 gap-8 ">
                     <template #footer>
                         <div class="w-100% flex justify-center">
-                            <el-button type="primary" size="large" >修改
+                            <el-button type="primary" size="large" @click="updateNews">修改
                             </el-button>
 
                         </div>
@@ -82,37 +82,37 @@ const change = (field: keyof News, value: any) => {
 }
 
 
-// const updateNews = () => {
-//     if (!file.value) {
-//         const photoName = `${new Date().getTime()}`
-//         file.value = dataURLtoFile(
-//             `data:image/png;base64,` + cinema.value.cinemaImg,
-//             `${photoName}.jpg`
-//         )
-//         console.log(file);
+const updateNews = () => {
+    if (!file.value) {
+        const photoName = `${new Date().getTime()}`
+        file.value = dataURLtoFile(
+            `data:image/png;base64,` + news.value.img,
+            `${photoName}.jpg`
+        )
+        console.log(file);
 
-//     }
+    }
 
-//     let formData = new FormData()
-//     formData.append("file", file.value as File)
-//     formData.append("id", cinema.value.id.toString())
-//     formData.append("cinemaName", cinema.value.cinemaName)
-//     formData.append("cinemaAddress", cinema.value.cinemaAddress)
-//     formData.append("cinemaScore", cinema.value.cinemaScore.toString())
-//     console.log(formData);
+    let formData = new FormData()
+    formData.append("file", file.value as File)
+    formData.append("id", cinema.value.id.toString())
+    formData.append("cinemaName", cinema.value.cinemaName)
+    formData.append("cinemaAddress", cinema.value.cinemaAddress)
+    formData.append("cinemaScore", cinema.value.cinemaScore.toString())
+    console.log(formData);
 
-//     apiUpdateCinema(formData).then((result) => {
-//         if (result.code == 200) {
-//             ElMessage({
-//                 showClose: true,
-//                 message: '修改成功',
-//                 type: 'success',
-//             })
-//         }
+    apiUpdateCinema(formData).then((result) => {
+        if (result.code == 200) {
+            ElMessage({
+                showClose: true,
+                message: '修改成功',
+                type: 'success',
+            })
+        }
 
-//     })
+    })
 
-// }
+}
 
 interface News {
     consultAnnouncer: string

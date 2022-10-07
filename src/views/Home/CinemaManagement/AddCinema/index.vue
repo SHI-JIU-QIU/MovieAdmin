@@ -92,6 +92,7 @@ import { useRoute } from 'vue-router'
 import type { UploadProps } from 'element-plus'
 import { apiUpdateCinema, apiGetHallList } from '@/api/cinema'
 import { ElMessage } from 'element-plus'
+import { Plus } from '@element-plus/icons-vue'
 
 interface Cinema {
     id: number
@@ -237,4 +238,28 @@ function dataURLtoFile(dataurl: string, filename: string) {
 :deep() .el-card__body {
     @apply flex items-center justify-between
 }
+
+
+.avatar-uploader .el-upload {
+    border: 1px dashed var(--el-border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: var(--el-transition-duration-fast);
+}
+
+.avatar-uploader .el-upload:hover {
+    border-color: var(--el-color-primary);
+}
+
+.el-icon.avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 292px;
+    height: 292px;
+    text-align: center;
+}
+
+
 </style>
