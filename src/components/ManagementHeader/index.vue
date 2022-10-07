@@ -40,6 +40,8 @@ import { apiSelectUserByName } from '@/api/user'
 import { apiGetMovieByName } from '@/api/movie'
 import { apiGetCinemaByName } from '@/api/cinema'
 import { apiGetNewsByTitle } from '@/api/news'
+import { apiGetOrderByName} from '@/api/order'
+
 import useStore from '@/store/index'
 import CommentCard from '../../views/Home/MovieManagement/CommentCard/index.vue'
 
@@ -47,7 +49,7 @@ import CommentCard from '../../views/Home/MovieManagement/CommentCard/index.vue'
 let keyword = ref('')
 
 const route = useRoute()
-const { userStore, movieStore, cinemaStore, newsStore } = useStore()
+const { userStore, movieStore, cinemaStore, newsStore ,orderStore} = useStore()
 const search = (value: string) => {
   keyword.value = value
   if (keyword.value == '' && route.path.includes('user')) {
@@ -90,7 +92,17 @@ const search = (value: string) => {
       }
     }
     )
-
+  }
+  else if(keyword.value == '' && route.path.includes('order')){
+    orderStore.reqGetRefundOrder()
+  }
+  else if(route.path.includes('order')){
+    apiGetOrderByName({ name: keyword.value }).then((result) => {
+      if (result.code == 200) {
+        newsStore.newsList = result.data
+      }
+    }
+    )
   }
 }
 

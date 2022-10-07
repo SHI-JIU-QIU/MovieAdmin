@@ -94,7 +94,7 @@ const addNews = () => {
     formData.append("consultTitle", news.value.consultTitle)
     formData.append("consultContent", news.value.consultContent)
     formData.append("consultAnnouncer", news.value.consultAnnouncer)
-    formData.append("consultScore", (-1).toString())
+    formData.append("consultScore", news.value.consultScore.toString())
     console.log(formData);
 
     apiAddNews(formData).then((result) => {

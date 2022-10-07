@@ -1,8 +1,8 @@
 <template>
 
-    <video id="videoElement" autoplay muted loop class="w-120% fixed -z-1 -top-34 left-50% transform -translate-x-50%">
+    <!-- <video id="videoElement" autoplay muted loop class="w-120% fixed -z-1 -top-34 left-50% transform -translate-x-50%">
         <source src="@/assets/bgv.mp4">
-    </video>
+    </video> -->
 
 
 
@@ -59,7 +59,6 @@ const valueChange = (value: string, key: string) => {
 
 
 const ruleFormRef = ref<FormInstance>();
-console.log(ruleFormRef);
 
 
 const { userStore } = useStore()

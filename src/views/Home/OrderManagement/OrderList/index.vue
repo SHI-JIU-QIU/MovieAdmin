@@ -13,10 +13,12 @@ import { ref } from 'vue';
 
 const { orderStore } = useStore()
 let orderList = ref()
-orderStore.reqGetAllOrder().then(() => {
+orderStore.reqGetRefundOrder().then(() => {
     orderList.value = orderStore.orderList
 })
-
+orderStore.$subscribe(()=>{
+    orderList.value = orderStore.orderList
+})
 
 </script>
 

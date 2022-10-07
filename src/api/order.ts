@@ -10,10 +10,6 @@ export const apiGetAllOrder = () => {
 }
 
 
-
-
-
-
 //根据订单id查找订单
 
 export const apiGetOrderById = (data: any) => {
@@ -35,7 +31,7 @@ export const apiAgreeForRefund = (data: any) => {
         url: '/agreeForRefund',
         method: 'POST',
         params: {
-            id: data.id
+            orderId: data.id
         }
     })
 }
@@ -54,7 +50,7 @@ export const apiGetOrderByName = (data: any) => {
 
 //查询所有退票订单信息
 
-export const apiGetAllRefundOrder = (data: any) => {
+export const apiGetAllRefundOrder = () => {
     return serve({
         url: '/selectAllRefundOrder',
         method: 'GET',

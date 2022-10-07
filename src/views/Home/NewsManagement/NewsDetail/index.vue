@@ -51,7 +51,7 @@ import { ref } from 'vue'
 import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import type { UploadProps } from 'element-plus'
-import { apiUpdateCinema, apiGetHallList } from '@/api/cinema'
+import {apiUpdateNews} from '@/api/news'
 import { ElMessage } from 'element-plus'
 
 interface Cinema {
@@ -95,13 +95,14 @@ const updateNews = () => {
 
     let formData = new FormData()
     formData.append("file", file.value as File)
-    formData.append("id", cinema.value.id.toString())
-    formData.append("cinemaName", cinema.value.cinemaName)
-    formData.append("cinemaAddress", cinema.value.cinemaAddress)
-    formData.append("cinemaScore", cinema.value.cinemaScore.toString())
+    formData.append("id", news.value.id.toString())
+    formData.append("consultTitle", news.value.consultTitle)
+    formData.append("consultAnnouncer", news.value.consultAnnouncer)
+        formData.append("consultContent", news.value.consultContent)
+    formData.append("consultScore", news.value.consultScore.toString())
     console.log(formData);
 
-    apiUpdateCinema(formData).then((result) => {
+    apiUpdateNews(formData).then((result) => {
         if (result.code == 200) {
             ElMessage({
                 showClose: true,

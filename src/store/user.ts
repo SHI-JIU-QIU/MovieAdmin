@@ -1,24 +1,24 @@
 import { defineStore } from 'pinia'
-import {apiGetAllUser,apiLogin} from '@/api/user'
+import { apiGetAllUser, apiLogin } from '@/api/user'
 
 const useUserStore = defineStore('userStore', {
     state: () => {
         return {
-            userList:[],
-            user:{}
+            userList: [],
+            user: {}
         }
     },
     getters: {
 
     },
     actions: {
-        async reqGetAllUser(){
+        async reqGetAllUser() {
             let result = await apiGetAllUser()
             console.log(result);
-            if(result.code==200){
-                this.userList =result.data
-                
-                
+            if (result.code == 200) {
+                this.userList = result.data
+
+
             }
         },
         async reqLogin(data: any) {
@@ -28,9 +28,12 @@ const useUserStore = defineStore('userStore', {
                 return true
             }
             else {
-                return false                
+                return false
             }
         },
+        exit() {
+            this.user = {}
+        }
 
 
     }
