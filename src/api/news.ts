@@ -60,3 +60,15 @@ export const apiGetNewsByTitle = (data: any) => {
         }
     })
 }
+
+//修改资讯
+export const apiUpdateNews = (formData: FormData) => {
+    return serve({
+        url: '/updateConsult',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        },
+        data: formData
+    })
+}
