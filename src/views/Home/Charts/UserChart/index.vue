@@ -1,14 +1,15 @@
 <template>
-    <el-card shadow="hover" class="w-49% mb-4 h-40%" id="user"> </el-card>
+    <el-card shadow="hover" class="w-30% mb-4 h-40%" id="user"> </el-card>
 </template>
 
 <script setup lang='ts'>
 import * as echarts from 'echarts/core';
-import { TooltipComponent, LegendComponent,  TitleComponent, } from 'echarts/components';
+import { TooltipComponent, LegendComponent, TitleComponent, } from 'echarts/components';
 import { PieChart } from 'echarts/charts';
 import { LabelLayout } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import { onMounted } from 'vue'
+import { onBeforeMount, onMounted } from 'vue'
+import { apiGetAllUser } from '@/api/user';
 
 echarts.use([
     TitleComponent,
@@ -19,63 +20,76 @@ echarts.use([
     LabelLayout
 ]);
 
-onMounted(() => {
-    var chartDom = document.getElementById('user') as HTMLElement;
-    var myChart = echarts.init(chartDom);
-    var option;
+let count = 0
+onBeforeMount(() => {
 
-    option = {
-        title: {
-            text: '注册用户',
-            left: 'center',
-            top:'5%'
-        },
-        tooltip: {
-            trigger: 'item'
-        },
-        legend: {
-            top: '14%',
-            left: 'center'
-        },
-        series: [
-            {
-                name: 'Access From',
-                type: 'pie',
-                radius: ['40%', '50%'],
-                avoidLabelOverlap: false,
-                itemStyle: {
-                    borderRadius: 10,
-                    borderColor: '#fff',
-                    borderWidth: 2
+}),
+
+
+    onMounted(() => {
+        apiGetAllUser().then((result) => {
+            count = result.count
+            var chartDom = document.getElementById('user') as HTMLElement;
+            var myChart = echarts.init(chartDom);
+            var option;
+
+            option = {
+                title: {
+                    text: '注册用户',
+                    left: 'center',
+                    top: '5%'
                 },
-                label: {
-                    show: false,
-                    position: 'center'
+                tooltip: {
+                    trigger: 'item'
                 },
-                emphasis: {
-                    label: {
-                        show: true,
-                        fontSize: '30',
-                        fontWeight: 'bold'
+                legend: {
+                    top: '14%',
+                    left: 'center'
+                },
+                series: [
+                    {
+                        name: 'Access From',
+                        type: 'pie',
+                        radius: ['40%', '50%'],
+                        avoidLabelOverlap: false,
+                        itemStyle: {
+                            borderRadius: 10,
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        },
+                        label: {
+                            show: true,
+                            position: 'center',
+                            textStyle: {
+                                fontSize: 30,
+                            }
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: '30',
+                                fontWeight: 'bold'
+                            }
+                        },
+                        labelLine: {
+                            show: false
+                        },
+                        data: [
+                            { value: count, name: count },
+                            // { value: 735, name: 'Direct' },
+                            // { value: 580, name: 'Email' },
+                            // { value: 484, name: 'Union Ads' },
+                            // { value: 300, name: 'Video Ads' }
+                        ]
                     }
-                },
-                labelLine: {
-                    show: false
-                },
-                data: [
-                    { value: 1048, name: 'Search Engine' },
-                    { value: 735, name: 'Direct' },
-                    { value: 580, name: 'Email' },
-                    { value: 484, name: 'Union Ads' },
-                    { value: 300, name: 'Video Ads' }
                 ]
-            }
-        ]
 
-    };
+            };
 
-    option && myChart.setOption(option);
-})
+            option && myChart.setOption(option);
+        })
+
+    })
 
 
 
@@ -86,5 +100,4 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
 </style>

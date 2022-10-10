@@ -1,6 +1,8 @@
 <template>
   <div class="w-100% mt-10 flex  justify-center items-center  bg-white">
-
+    
+    
+    <!-- 上传头像 start-->
     <div class="flex-1 flex justify-center">
       <el-upload class="avatar-uploader w-178px h-178px  border-1 border-gray-200 mr-8" action="/api/updateHeader"
         :show-file-list="false" :data="{id:route.query.id}" :on-success="handleAvatarSuccess" name="file"
@@ -12,6 +14,10 @@
         </el-icon>
       </el-upload>
     </div>
+  <!-- end -->
+
+
+
 
     <Form :config="userFormConfig.formItems" :model-value="user" @update:model-value="change"
       class="rounded border-l-0.5 flex-1 border-gray-200 items-center p-14" formStyle="flex flex-col" itemStyle="w-40%">
@@ -41,8 +47,9 @@ import { Plus } from '@element-plus/icons-vue'
 import { useRoute } from 'vue-router'
 import type { UploadProps } from 'element-plus'
 
-const imageUrl = ref('')
 
+//获取上传成功后的头像
+const imageUrl = ref('')
 const handleAvatarSuccess: UploadProps['onSuccess'] = (
   response,
   uploadFile
@@ -55,6 +62,7 @@ const handleAvatarSuccess: UploadProps['onSuccess'] = (
   })
 }
 
+//上传图片前的限制
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
   if (rawFile.type !== 'image/jpeg') {
     ElMessage.error('Avatar picture must be JPG format!')
@@ -65,6 +73,11 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
   }
   return true
 }
+
+
+
+
+
 
 type User = {
   id: number;

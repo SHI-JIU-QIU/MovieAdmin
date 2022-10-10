@@ -7,7 +7,7 @@
 
             <el-sub-menu index="1">
                 <template #title>
-                    <el-avatar :src="`data:image/png;base64,`+userStore.user.avatar" />
+                    <el-avatar :src="`data:image/png;base64,` + userStore.user.avatar" />
                 </template>
                 <el-menu-item index="1-1" class="flex justify-center " @click="exit"> 退出登录</el-menu-item>
 

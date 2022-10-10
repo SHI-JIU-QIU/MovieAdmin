@@ -4,15 +4,16 @@
             <el-collapse-item>
                 <template #title class="">
                     订单编号：{{ order.id }}
+                      <span class="mx-10">用户：{{ order.orderUser.username }}</span>
                     <el-button type="danger" size="small" class="ml-auto" @click="agree"> 退票</el-button>
                 </template>
-                <span class="mr-10">用户：{{ order.orderUser.username }}</span>
+              
                 <span class="mr-10">电影：{{ order.orderSchedule.scheduleMovie.movieCName }}</span>
                 <span class="mr-10">电影院：{{ order.orderSchedule.scheduleHall.hallCinema.cinemaName }}</span>
                 <span class="mr-10">影厅：{{ order.orderSchedule.scheduleHall.hallName }}</span>
                 <span class="mr-10">场次：{{ order.orderSchedule.scheduleStartTime }}</span>
                 <span class="mr-10">座位：{{ order.orderPosition }}</span>
-                <span class="mr-10">取件码：xxxxxxxxxxx</span>
+                
                 <span class="mr-10">价格：{{ order.orderPrice }}</span>
                 <span class="mr-10">订单时间：{{ order.orderTime.replace('T', ' ').slice(0, 19) }}</span>
             </el-collapse-item>
@@ -58,7 +59,6 @@ const agree = () => {
             type: 'success',
         })
         orderStore.reqGetRefundOrder()
-
     })
 }
 

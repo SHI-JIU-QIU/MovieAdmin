@@ -99,7 +99,7 @@ const search = (value: string) => {
   else if(route.path.includes('order')){
     apiGetOrderByName({ name: keyword.value }).then((result) => {
       if (result.code == 200) {
-        newsStore.newsList = result.data
+        orderStore.orderList = result.data
       }
     }
     )

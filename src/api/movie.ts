@@ -59,3 +59,14 @@ export const apiDeleteComment = (data: any) => {
         }
     })
 }
+
+
+export const apisortAllMovie = (data: any) => {
+    return serve({
+        url: '/sortAllMovie',
+        method: 'GET',
+        params: {
+            name: data.name
+        }
+    })
+}

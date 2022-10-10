@@ -1,11 +1,23 @@
 import { defineStore } from 'pinia'
 import { apiGetAllUser, apiLogin } from '@/api/user'
 
+
+interface User {
+    avatar: string
+    email: string
+    header?: string
+    id: number
+    password: string
+    phone: string
+    type: number
+    username: string
+}
+
 const useUserStore = defineStore('userStore', {
     state: () => {
         return {
             userList: [],
-            user: {}
+            user: {} as User
         }
     },
     getters: {
@@ -32,7 +44,7 @@ const useUserStore = defineStore('userStore', {
             }
         },
         exit() {
-            this.user = {}
+            this.user = {} as User
         }
 
 
