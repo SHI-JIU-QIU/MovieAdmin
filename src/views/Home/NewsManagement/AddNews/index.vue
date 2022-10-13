@@ -17,12 +17,12 @@
 
                     </el-upload>
                 </div>
-                <Form :config="newsFormConfig.formItems" :modelValue="news" @update:model-value="change"
+                <Form ref="formRef" :config="newsFormConfig.formItems" :modelValue="news" @update:model-value="change"
                     class="rounded border-l-0.5 border-gray-200 flex-1  p-14 bg-white flex-col"
                     formStyle="grid grid-cols-2 gap-8 ">
                     <template #footer>
                         <div class="w-100% flex justify-center">
-                            <el-button type="primary" size="large" @click="addNews">添加
+                            <el-button type="primary" size="large" v-if="formEl" @click="addNews(formEl)">添加
                             </el-button>
 
                         </div>
@@ -42,13 +42,15 @@
 import { newsFormConfig } from '../newsConfig'
 import useStore from '@/store/index'
 import Form from '@/components/Form/index.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import type { UploadProps } from 'element-plus'
 import { apiAddNews } from '@/api/news'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
+import type { FormInstance, FormRules } from 'element-plus'
+
 
 interface Cinema {
     id: number
@@ -78,37 +80,58 @@ const change = (field: keyof News, value: any) => {
 }
 
 
-const addNews = () => {
-    if (!file.value) {
-        const photoName = `${new Date().getTime()}`
-        file.value = dataURLtoFile(
-            `data:image/png;base64,` + news.value.img,
-            `${photoName}.jpg`
-        )
-        console.log(file);
 
-    }
+const formRef = ref<any>(null)
+let formEl = ref<any>()
+onMounted(() => {
+    formEl.value = formRef.value.ruleFormRef;
+    console.log(formEl);
+})
 
-    let formData = new FormData()
-    formData.append("file", file.value as File)
-    formData.append("consultTitle", news.value.consultTitle)
-    formData.append("consultContent", news.value.consultContent)
-    formData.append("consultAnnouncer", news.value.consultAnnouncer)
-    formData.append("consultScore", news.value.consultScore.toString())
-    console.log(formData);
+const addNews = async (formEl: FormInstance | undefined) => {
+    console.log(formEl);
 
-    apiAddNews(formData).then((result) => {
-        if (result.code == 200) {
+    if (!formEl) return
+    await formEl.validate((valid, fields) => {
+        if (valid) {
+            if (!file.value) {
+                const photoName = `${new Date().getTime()}`
+                file.value = dataURLtoFile(
+                    `data:image/png;base64,` + news.value.img,
+                    `${photoName}.jpg`
+                )
+                console.log(file);
+
+            }
+
+            let formData = new FormData()
+            formData.append("file", file.value as File)
+            formData.append("consultTitle", news.value.consultTitle)
+            formData.append("consultContent", news.value.consultContent)
+            formData.append("consultAnnouncer", news.value.consultAnnouncer)
+            formData.append("consultScore", news.value.consultScore.toString())
+            console.log(formData);
+
+            apiAddNews(formData).then((result) => {
+                if (result.code == 200) {
+                    ElMessage({
+                        showClose: true,
+                        message: '添加成功',
+                        type: 'success',
+                    })
+                }
+
+            })
+        } else {
             ElMessage({
-                showClose: true,
-                message: '添加成功',
-                type: 'success',
+                message: '请输入完整',
+                type: 'error',
             })
         }
-
     })
-
 }
+
+
 
 interface News {
     consultAnnouncer: string
@@ -170,5 +193,4 @@ function dataURLtoFile(dataurl: string, filename: string) {
     height: 300px;
     text-align: center;
 }
-
 </style>

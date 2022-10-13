@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import { ElMessage } from 'element-plus'
+
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
@@ -73,12 +75,12 @@ const routes: Array<RouteRecordRaw> = [
                         path: '/home/cinemaManagement/cinemaDetail',
                         name: 'CinemaDetail',
                         component: () => import('@/views/Home/CinemaManagement/CinemaDetail/index.vue'),
-                    },{
+                    }, {
                         path: '/home/cinemaManagement/addCinema',
                         name: 'AddCinema',
                         component: () => import('@/views/Home/CinemaManagement/AddCinema/index.vue'),
                     }]
-                },{
+                }, {
                     path: '/home/newsManagement',
                     name: 'NewsManagement',
                     redirect: '/home/newsManagement/newsList',
@@ -91,7 +93,7 @@ const routes: Array<RouteRecordRaw> = [
                         path: '/home/newsManagement/newsDetail',
                         name: 'NewsDetail',
                         component: () => import('@/views/Home/NewsManagement/NewsDetail/index.vue'),
-                    },{
+                    }, {
                         path: '/home/newsManagement/addNews',
                         name: 'AddNews',
                         component: () => import('@/views/Home/NewsManagement/AddNews/index.vue'),
@@ -106,6 +108,17 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
     routes,
     history: createWebHistory(),
+})
+
+
+router.beforeEach((to, from, next) => {
+    if (!localStorage.getItem('piniaAdmin-userStore') && to.name !== 'Login') {
+        ElMessage.error('请先登录')
+        next({ name: 'Login' })
+    }
+    else {
+        next()
+    }
 })
 
 export default router

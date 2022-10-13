@@ -120,6 +120,17 @@ export const apiupdateScheduleMovie = (data: any) => {
     })
 }
 
+export const apiupdateScheduleTime = (data: any) => {
+    return serve({
+        url: '/updateScheduleTime',
+        method: 'POST',
+        params: {
+            scheduleID: data.scheduleID,
+            time: data.time
+        }
+    })
+}
+
 
 
 export const apiofflineSchedule = (data: any) => {
@@ -128,6 +139,31 @@ export const apiofflineSchedule = (data: any) => {
         method: 'POST',
         params: {
             scheduleId: data.scheduleId
+        }
+    })
+}
+
+
+export const apideleteCinema = (data: any) => {
+    return serve({
+        url: '/deleteCinema',
+        method: 'POST',
+        params: {
+            id: data.id
+        }
+    })
+}
+
+export const apiinsertSchedule = (data: any) => {
+    return serve({
+        url: '/insertSchedule',
+        method: 'POST',
+        params: {
+            movieName: data.movieName,
+            hallName: data.hallName,
+            cinemaName: data.cinemaName,
+            schedulePrice: data.schedulePrice,
+            scheduleStartTime: data.scheduleStartTime
         }
     })
 }

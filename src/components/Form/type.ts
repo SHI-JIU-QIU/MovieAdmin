@@ -1,4 +1,4 @@
-type IFormType = 'input' | 'password' | 'select' | 'datePicker' | 'textarea' |'input-number'| 'radio'
+type IFormType = 'input' | 'disinput' | 'password' | 'select' | 'datePicker' | 'textarea' | 'input-number' | 'radio'
 
 interface IFormOption {
   label: string
@@ -6,7 +6,7 @@ interface IFormOption {
 }
 
 export interface IFormItem {
-  field:string //字段名
+  field: string //字段名
   type: IFormType //输入框类型
   dataType?: string //输入框返回数据类型
   label: string //输入框标题

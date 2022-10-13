@@ -18,12 +18,13 @@
 
                     </el-upload>
                 </div>
-                <Form :config="cinemaFormConfig.formItems" :modelValue="cinema" @update:model-value="change"
+                <Form ref="formRef" :config="cinemaFormConfig.formItems" :modelValue="cinema"
+                    @update:model-value="change"
                     class="rounded border-l-0.5 border-gray-200 flex-1  p-14 bg-white flex-col"
                     formStyle="grid grid-cols-2 gap-8 ">
                     <template #footer>
                         <div class="w-100% flex justify-center">
-                            <el-button type="primary" size="large" @click="updateCinema">修改
+                            <el-button v-if="formEl" type="primary" size="large" @click="updateCinema(formEl)">修改
                             </el-button>
 
                         </div>
@@ -44,7 +45,7 @@
                 <el-card shadow="always" class="m-4 " v-for="item in hallList">
                     <span class="font-semibold">{{ item.hallName }}</span>
                     <div>
-                        <el-button type="primary" @click="editHall(item.id)">编辑</el-button>
+                        <el-button type="primary" @click="editHall(item.id, item.hallName)">编辑</el-button>
                         <el-button type="danger" @click="deleteHall(item.id)">删除</el-button>
                     </div>
                 </el-card>
@@ -56,14 +57,21 @@
             <template #header="{ close, titleId, titleClass }">
                 <div class="flex justify-between">
                     <h4 class="text-2xl text-gray-600 ">场次</h4>
-                    <el-button type="primary" class="mr-10" @click="addScreen">添加</el-button>
+                    <el-button type="primary" class="mr-10" @click="add">+</el-button>
                 </div>
             </template>
 
             <el-table :data="gridData" :default-sort="{ prop: 'date', order: 'descending' }">
-                <el-table-column prop="date" sortable label="时间">
+
+                <el-table-column label="时间" sortable width="246">
+                    <template #default="scope">
+                        <el-date-picker v-model="scope.row.date" type="datetime" fomat="YYYY-MM-DD HH:mm"
+                            value-format='YYYY-MM-DD HH:mm' placeholder="Select date and time" />
+                    </template>
+
 
                 </el-table-column>
+
                 <el-table-column label="电影">
                     <template #default="scope">
                         <el-input v-model="scope.row.movie"></el-input>
@@ -77,9 +85,14 @@
                 </el-table-column>
                 <el-table-column label="Operations">
                     <template #default="scope">
-                        <el-button size="small" type="primary" @click="editScreen(scope.$index, scope.row)">修改
+                        <el-button size="small" type="primary" v-if='scope.row.id != -1'
+                            @click="editScreen(scope.$index, scope.row)">修改
                         </el-button>
-                        <el-button size="small" type="danger" @click="deleteScreen(scope.$index, scope.row)">删除
+                        <el-button size="small" type="primary" v-if='scope.row.id == -1'
+                            @click="addScreen(scope.$index, scope.row)">添加
+                        </el-button>
+                        <el-button size="small" type="danger" v-if='scope.row.id != -1'
+                            @click="deleteScreen(scope.$index, scope.row)">删除
                         </el-button>
                     </template>
                 </el-table-column>
@@ -113,13 +126,14 @@
 import { cinemaFormConfig } from '../cinemaConfig'
 import useStore from '@/store/index'
 import Form from '@/components/Form/index.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import type { UploadProps } from 'element-plus'
-import { apiUpdateCinema, apiGetHallList, apiselectfromHall, apiAddHall, apideleteHall, apiupdateSchedulePrice, apiupdateScheduleMovie, apiofflineSchedule } from '@/api/cinema'
+import { apiUpdateCinema, apiGetHallList, apiselectfromHall, apiAddHall, apideleteHall, apiupdateSchedulePrice, apiupdateScheduleMovie, apiofflineSchedule, apiupdateScheduleTime, apiinsertSchedule } from '@/api/cinema'
 import { ElMessage } from 'element-plus'
 import { apiGetMovieById } from '@/api/movie'
+import type { FormInstance, FormRules } from 'element-plus'
 
 interface Cinema {
     id: number
@@ -129,6 +143,9 @@ interface Cinema {
     cinemaScore: number
     cinemaImg: string
 }
+
+let currenthallName = ref()
+let currentcinemaName = ref()
 
 
 
@@ -157,11 +174,19 @@ const editScreen = (index: number, row: any) => {
             scheduleId: row.id,
             movieName: row.movie
         }).then(() => {
-            ElMessage({
-                showClose: true,
-                message: '修改成功',
-                type: 'success',
+            apiupdateScheduleTime({
+                scheduleID: row.id,
+                time: row.date
+            }).then(() => {
+                ElMessage({
+                    showClose: true,
+                    message: '修改成功',
+                    type: 'success',
+                })
             })
+
+
+
         })
     })
 }
@@ -173,54 +198,74 @@ const deleteScreen = (index: number, row: any) => {
             message: '删除成功',
             type: 'success',
         })
-
-        apiGetHallList({ id: route.query.id }).then((result) => {
+        apiselectfromHall({ id: currentHallId.value }).then((result) => {
             if (result.code == 200) {
-                hallList.value = result.data
+                gridData.value = []
+                result.data.forEach((item: any) => {
+                    gridData.value.push({ id: item.id, date: item.scheduleStartTime, price: item.schedulePrice, movie: item.scheduleMovie.movieCName })
+
+                })
             }
         })
 
 
-
     })
 
 
 }
 
+const formRef = ref<any>(null)
+let formEl = ref<any>()
+onMounted(() => {
+    formEl.value = formRef.value.ruleFormRef;
+    console.log(formEl);
+})
 
+const updateCinema = async (formEl: FormInstance | undefined) => {
+    console.log(formEl);
 
+    if (!formEl) return
+    await formEl.validate((valid, fields) => {
+        if (valid) {
+            if (!file.value) {
+                const photoName = `${new Date().getTime()}`
+                file.value = dataURLtoFile(
+                    `data:image/png;base64,` + cinema.value.cinemaImg,
+                    `${photoName}.jpg`
+                )
+                console.log(file);
 
-const updateCinema = () => {
-    if (!file.value) {
-        const photoName = `${new Date().getTime()}`
-        file.value = dataURLtoFile(
-            `data:image/png;base64,` + cinema.value.cinemaImg,
-            `${photoName}.jpg`
-        )
-        console.log(file);
+            }
 
-    }
+            let formData = new FormData()
+            formData.append("file", file.value as File)
+            formData.append("id", cinema.value.id.toString())
+            formData.append("cinemaName", cinema.value.cinemaName)
+            formData.append("cinemaAddress", cinema.value.cinemaAddress)
+            formData.append("cinemaScore", cinema.value.cinemaScore.toString())
+            console.log(formData);
 
-    let formData = new FormData()
-    formData.append("file", file.value as File)
-    formData.append("id", cinema.value.id.toString())
-    formData.append("cinemaName", cinema.value.cinemaName)
-    formData.append("cinemaAddress", cinema.value.cinemaAddress)
-    formData.append("cinemaScore", cinema.value.cinemaScore.toString())
-    console.log(formData);
+            apiUpdateCinema(formData).then((result) => {
+                if (result.code == 200) {
+                    ElMessage({
+                        showClose: true,
+                        message: '修改成功',
+                        type: 'success',
+                    })
+                }
 
-    apiUpdateCinema(formData).then((result) => {
-        if (result.code == 200) {
+            })
+        } else {
             ElMessage({
-                showClose: true,
-                message: '修改成功',
-                type: 'success',
+                message: '请输入完整',
+                type: 'error',
             })
         }
-
     })
-
 }
+
+
+
 
 interface Cinema {
     id: number
@@ -235,6 +280,7 @@ const { cinemaStore } = useStore()
 let cinema: Ref<Cinema> = ref<Cinema>({} as Cinema)
 cinemaStore.reqGetCinemaById({ id: route.query.id }).then(() => {
     cinema.value = cinemaStore.currentCinema
+    currentcinemaName.value = cinema.value.cinemaName
     imageUrl.value = `data:image/png;base64,` + cinema.value.cinemaImg
 })
 
@@ -246,45 +292,19 @@ apiGetHallList({ id: route.query.id }).then((result) => {
     }
 })
 
-// const gridData = [
-//     {
-//         date: '2016-05-02',
-//         name: 'John Smith',
-
-//     },
-//     {
-//         date: '2016-05-04',
-//         name: 'John Smith',
-
-//     },
-//     {
-//         date: '2016-05-01',
-//         name: 'John Smith',
-
-//     },
-//     {
-//         date: '2016-05-03',
-//         name: 'John Smith',
-
-//     },
-// ]
-
 
 let gridData = ref<any[]>([])
 let currentHallId = ref<number>()
 const dialogTableVisible = ref(false)
-const editHall = (id: number) => {
+const editHall = (id: number, hallName: any) => {
     gridData.value = []
     dialogTableVisible.value = true
-  
+    currentHallId.value = id
+    currenthallName.value = hallName
     apiselectfromHall({ id: id }).then((result) => {
         if (result.code == 200) {
             result.data.forEach((item: any) => {
-
-                apiGetMovieById({ id: item.movieId }).then((result) => {
-                    let movieCName = result.data.movieCName
-                    gridData.value.push({ id: item.id, date: item.scheduleStartTime, price: item.schedulePrice, movie: movieCName })
-                })
+                gridData.value.push({ id: item.id, date: item.scheduleStartTime, price: item.schedulePrice, movie: item.scheduleMovie.movieCName })
 
             })
         }
@@ -332,12 +352,34 @@ const deleteHall = (id: number) => {
                 hallList.value = result.data
             }
         })
+
     })
 }
 
 
 
+const add = () => {
+    gridData.value.push({ id: -1, date: '', price: 0, movie: '' })
+}
 
+const addScreen = (index: any, row: any) => {
+    apiinsertSchedule({
+        movieName: row.movie,
+        hallName: currenthallName.value,
+        cinemaName: currentcinemaName.value,
+        schedulePrice: row.price,
+        scheduleStartTime: row.date
+    }).then((result) => {
+        if (result.code == 200) {
+            ElMessage({
+                showClose: true,
+                message: '添加成功',
+                type: 'success',
+            })
+        }
+    })
+
+}
 
 
 
@@ -368,5 +410,30 @@ function dataURLtoFile(dataurl: string, filename: string) {
 <style scoped>
 :deep() .el-card__body {
     @apply flex items-center justify-between
+}
+
+.demo-datetime-picker {
+    display: flex;
+    width: 100%;
+    padding: 0;
+    flex-wrap: wrap;
+}
+
+.demo-datetime-picker .block {
+    padding: 30px 0;
+    text-align: center;
+    border-right: solid 1px var(--el-border-color);
+    flex: 1;
+}
+
+.demo-datetime-picker .block:last-child {
+    border-right: none;
+}
+
+.demo-datetime-picker .demonstration {
+    display: block;
+    color: var(--el-text-color-secondary);
+    font-size: 14px;
+    margin-bottom: 20px;
 }
 </style>

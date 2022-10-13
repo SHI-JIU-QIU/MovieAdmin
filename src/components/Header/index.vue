@@ -7,9 +7,10 @@
 
             <el-sub-menu index="1">
                 <template #title>
-                    <el-avatar :src="`data:image/png;base64,` + userStore.user.avatar" />
+                    <el-avatar :src="avatar" />
                 </template>
-                <el-menu-item index="1-1" class="flex justify-center " @click="exit"> 退出登录</el-menu-item>
+                <el-menu-item index="1-1" class="flex justify-center" v-if="Object.keys(user).length != 0"
+                    @click="exit"> 退出登录</el-menu-item>
 
             </el-sub-menu>
         </el-menu>
@@ -17,7 +18,7 @@
 </template>
 
 <script setup lang='ts'>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import useStore from '@/store';
 import router from '@/router';
 
@@ -37,6 +38,18 @@ const exit = () => {
     })
 
 }
+
+const user = userStore.user
+let avatar = computed(() => {
+    if (user.avatar) {
+        return `data:image/jpg;base64,` + user.avatar
+    }
+    else {
+        return 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
+    }
+})
+
+
 
 </script>
 

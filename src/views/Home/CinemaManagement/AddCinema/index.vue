@@ -18,12 +18,13 @@
 
                     </el-upload>
                 </div>
-                <Form :config="cinemaFormConfig.formItems" :modelValue="cinema" @update:model-value="change"
+                <Form ref="formRef" :config="cinemaFormConfig.formItems" :modelValue="cinema"
+                    @update:model-value="change"
                     class="rounded border-l-0.5 border-gray-200 flex-1  p-14 bg-white flex-col"
                     formStyle="grid grid-cols-2 gap-8 ">
                     <template #footer>
                         <div class="w-100% flex justify-center">
-                            <el-button type="primary" size="large" @click="insertCinema">添加
+                            <el-button type="primary" size="large" @click="insertCinema(formEl)">添加
                             </el-button>
 
                         </div>
@@ -46,13 +47,14 @@
 import { cinemaFormConfig } from '../cinemaConfig'
 import useStore from '@/store/index'
 import Form from '@/components/Form/index.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import type { UploadProps } from 'element-plus'
 import { apiinsertCinema, apiGetHallList } from '@/api/cinema'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
+import type { FormInstance, FormRules } from 'element-plus'
 
 interface Cinema {
     id: number
@@ -81,61 +83,79 @@ const change = (field: keyof Cinema, value: any) => {
 
 }
 
+const formRef = ref<any>(null)
+let formEl = ref<any>()
+onMounted(() => {
+    formEl.value = formRef.value.ruleFormRef;
+    console.log(formEl);
+})
 
-const insertCinema = () => {
-    if (!file.value) {
-        const photoName = `${new Date().getTime()}`
-        file.value = dataURLtoFile(
-            `data:image/png;base64,` + cinema.value.cinemaImg,
-            `${photoName}.jpg`
-        )
-        console.log(file);
+const insertCinema = async (formEl: FormInstance | undefined) => {
+    console.log(formEl);
 
-    }
+    if (!formEl) return
+    await formEl.validate((valid, fields) => {
+        if (valid) {
+            if (!file.value) {
+                const photoName = `${new Date().getTime()}`
+                file.value = dataURLtoFile(
+                    `data:image/png;base64,` + cinema.value.cinemaImg,
+                    `${photoName}.jpg`
+                )
+                console.log(file);
 
-    let formData = new FormData()
-    formData.append("file", file.value as File)
-    formData.append("cinemaName", cinema.value.cinemaName)
-    formData.append("cinemaAddress", cinema.value.cinemaAddress)
-    formData.append("cinemaScore", cinema.value.cinemaScore.toString())
-    console.log(formData);
+            }
 
-    apiinsertCinema(formData).then((result) => {
-        if (result.code == 200) {
+            let formData = new FormData()
+            formData.append("file", file.value as File)
+            formData.append("cinemaName", cinema.value.cinemaName)
+            formData.append("cinemaAddress", cinema.value.cinemaAddress)
+            formData.append("cinemaScore", cinema.value.cinemaScore.toString())
+            console.log(formData);
+
+            apiinsertCinema(formData).then((result) => {
+                if (result.code == 200) {
+                    ElMessage({
+                        showClose: true,
+                        message: '添加成功',
+                        type: 'success',
+                    })
+                }
+
+            })
+        } else {
             ElMessage({
-                showClose: true,
-                message: '添加成功',
-                type: 'success',
+                message: '请输入完整',
+                type: 'error',
             })
         }
-
     })
-
 }
 
-interface Cinema {
-    id: number
-    cinemaPicture: string
-    cinemaName: string
-    cinemaAddress: string
-    cinemaScore: number
-    cinemaImg: string
-}
+
+// interface Cinema {
+//     id: number
+//     cinemaPicture: string
+//     cinemaName: string
+//     cinemaAddress: string
+//     cinemaScore: number
+//     cinemaImg: string
+// }
 const route = useRoute()
 const { cinemaStore } = useStore()
 let cinema: Ref<Cinema> = ref<Cinema>({} as Cinema)
-cinemaStore.reqGetCinemaById({ id: route.query.id }).then(() => {
-    cinema.value = cinemaStore.currentCinema
-    imageUrl.value = `data:image/png;base64,` + cinema.value.cinemaImg
-})
+// cinemaStore.reqGetCinemaById({ id: route.query.id }).then(() => {
+//     cinema.value = cinemaStore.currentCinema
+//     imageUrl.value = `data:image/png;base64,` + cinema.value.cinemaImg
+// })
 
 
-let hallList = ref()
-apiGetHallList({ id: route.query.id }).then((result) => {
-    if (result.code == 200) {
-        hallList.value = result.data
-    }
-})
+// let hallList = ref()
+// apiGetHallList({ id: route.query.id }).then((result) => {
+//     if (result.code == 200) {
+//         hallList.value = result.data
+//     }
+// })
 
 
 

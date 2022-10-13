@@ -16,13 +16,13 @@
 
             </el-upload>
         </div>
-        <Form :config="movieFormConfig.formItems" :model-value="movie" @update:model-value="change"
+        <Form ref="formRef" :config="movieFormConfig.formItems" :model-value="movie" @update:model-value="change"
             class="rounded border-l-0.5 border-gray-200 flex-1  p-14 bg-white flex-col" itemStyle=""
             formStyle="grid grid-cols-3 gap-8 ">
 
             <template #footer>
                 <el-button type="primary" size="large" class="relative left-50% transform mt-8 -translate-x-50% w-30"
-                    @click="updateMovie">修改
+                    v-if="formEl" @click="updateMovie(formEl)">修改
                 </el-button>
             </template>
         </Form>
@@ -33,12 +33,14 @@
 <script setup lang='ts'>
 import Form from '@/components/Form/index.vue';
 import { movieFormConfig } from '../MovieFormConfig'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { apiGetMovieById, apiUpdateMovie } from '@/api/movie'
 import { useRoute } from 'vue-router'
 import useStore from '@/store';
+import type { FormInstance, FormRules } from 'element-plus'
+
 
 import type { UploadProps } from 'element-plus'
 
@@ -76,6 +78,13 @@ movieStore.reqGetMovieById({ id: route.query.id }).then(() => {
 
 })
 
+const formRef = ref<any>(null)
+let formEl = ref<any>()
+onMounted(() => {
+    formEl.value = formRef.value.ruleFormRef;
+    console.log(formEl);
+})
+
 
 const change = (field: keyof MovieDetail, value: any) => {
 
@@ -84,48 +93,64 @@ const change = (field: keyof MovieDetail, value: any) => {
 }
 
 let file = ref<File>()
-const updateMovie = () => {
-    if (!file.value) {
-        const photoName = `${new Date().getTime()}`
-        file.value = dataURLtoFile(
-            `data:image/png;base64,` + movie.value.movieImg,
-            `${photoName}.jpg`
-        )
-        console.log(file);
 
-    }
+const updateMovie = async (formEl: FormInstance | undefined) => {
+    console.log(formEl);
 
-    let formData = new FormData()
-    formData.append("file", file.value as File)
-    formData.append("id", movie.value.id.toString())
-    formData.append("movieCName", movie.value.movieCName)
-    formData.append("movieFName", movie.value.movieFName)
-    formData.append("movieActor", movie.value.movieActor)
-    formData.append("movieDirector", movie.value.movieDirector)
-    formData.append("movieDetail", movie.value.movieDetail)
-    formData.append("movieDuration", movie.value.movieDuration + `分钟`)
-    formData.append("movieType", movie.value.movieType)
-    formData.append("movieScore", movie.value.movieScore.toString())
-    formData.append("movieBoxOffice", movie.value.movieBoxOffice.toString())
-    formData.append("movieCommentCount", movie.value.movieCommentCount.toString())
-    formData.append("movieReleaseDate", movie.value.movieReleaseDate.replaceAll('-', '/'))
-    formData.append("movieCountry", movie.value.movieCountry)
-    formData.append("movieState", movie.value.movieState.toString())
+    if (!formEl) return
+    await formEl.validate((valid, fields) => {
+        if (valid) {
+            if (!file.value) {
+                const photoName = `${new Date().getTime()}`
+                file.value = dataURLtoFile(
+                    `data:image/png;base64,` + movie.value.movieImg,
+                    `${photoName}.jpg`
+                )
+                console.log(file);
 
-    console.log(formData);
+            }
+
+            let formData = new FormData()
+            formData.append("file", file.value as File)
+            formData.append("id", movie.value.id.toString())
+            formData.append("movieCName", movie.value.movieCName)
+            formData.append("movieFName", movie.value.movieFName)
+            formData.append("movieActor", movie.value.movieActor)
+            formData.append("movieDirector", movie.value.movieDirector)
+            formData.append("movieDetail", movie.value.movieDetail)
+            formData.append("movieDuration", movie.value.movieDuration + `分钟`)
+            formData.append("movieType", movie.value.movieType)
+            formData.append("movieScore", movie.value.movieScore.toString())
+            formData.append("movieBoxOffice", movie.value.movieBoxOffice.toString())
+            formData.append("movieCommentCount", movie.value.movieCommentCount.toString())
+            formData.append("movieReleaseDate", movie.value.movieReleaseDate.replaceAll('-', '/'))
+            formData.append("movieCountry", movie.value.movieCountry)
+            formData.append("movieState", movie.value.movieState.toString())
+
+            console.log(formData);
 
 
-    apiUpdateMovie(formData).then((result) => {
-        if (result.code == 200) {
+            apiUpdateMovie(formData).then((result) => {
+                if (result.code == 200) {
+                    ElMessage({
+                        showClose: true,
+                        message: '修改成功',
+                        type: 'success',
+                    })
+                }
+
+            })
+        } else {
             ElMessage({
-                showClose: true,
-                message: '修改成功',
-                type: 'success',
+                message: '请输入完整',
+                type: 'error',
             })
         }
-
     })
 }
+
+
+
 
 
 
