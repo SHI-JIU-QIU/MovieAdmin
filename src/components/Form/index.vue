@@ -37,7 +37,7 @@
                         </el-select>
                     </template>
 
-                    <template v-if="(item.type === 'input-number' && (item.field === 'movieScore' || 'cinemaScore'))">
+                    <template v-if="(item.type === 'input-number' && (item.field === 'movieScore' || item.field==='cinemaScore'))">
                         <el-input-number :modelValue="modelValue[`${item.field}`]"
                             @update:modelValue="valueChange($event, item.field)" :precision="1" :step="0.1" :max="10">
                         </el-input-number>
